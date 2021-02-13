@@ -2,7 +2,7 @@ import { StyleSheet, Text } from "react-native";
 import React from "react";
 
 function Timer({ seconds }) {
-  return <Text>{seconds}</Text>;
+  return <Text style={{ fontSize: 50 }}>{seconds}</Text>;
 }
 
 const styles = StyleSheet.create({
