@@ -34,13 +34,25 @@ const timeData = [
 ];
 
 const defaultState = {
+  end: timeData[0].end,
   isActive: false,
   seconds: 0,
   sectionId: 0,
   setNo: timeData[0].setNo,
+  start: timeData[0].start,
   timeMax: timeData[timeData.length - 1].end,
   type: timeData[0].type,
   workoutNo: timeData[0].workoutNo,
+};
+
+const returnSectionId = (seconds) => {
+  let findResult = timeData.find(
+    (section) => seconds >= section.start && seconds < section.end
+  );
+  if (!findResult)
+    findResult = timeData.find((section) => seconds === section.end);
+
+  return findResult?.id;
 };
 
 export default function App() {
@@ -52,22 +64,33 @@ export default function App() {
   }
 
   function toggle() {
-    // setIsActive(!isActive);
+    if (state.seconds >= state.timeMax) return Alert.alert("End");
     setPartOfState({ isActive: !state.isActive });
   }
 
   function reset() {
-    // setSeconds(0);
-    // setIsActive(false);
-    setPartOfState({ seconds: 0, isActive: false });
+    setPartOfState(defaultState);
   }
 
   useEffect(() => {
     let interval = null;
-    if (state.isActive) {
+    if (state.isActive && state.seconds < state.timeMax) {
       interval = setInterval(() => {
-        // setSeconds((seconds) => seconds + 1);
-        setPartOfState({ seconds: state.seconds + 1 });
+        const newSectionId = returnSectionId(state.seconds + 1);
+
+        const newIsActive =
+          state.seconds + 1 == state.timeMax ? { isActive: false } : {};
+
+        setPartOfState({
+          seconds: state.seconds + 1,
+          sectionId: newSectionId,
+          setNo: timeData[newSectionId].setNo,
+          type: timeData[newSectionId].type,
+          workoutNo: timeData[newSectionId].workoutNo,
+          start: timeData[newSectionId].start,
+          end: timeData[newSectionId].end,
+          ...newIsActive,
+        });
       }, 1000);
     } else if (!state.isActive && state.seconds !== 0) {
       clearInterval(interval);
