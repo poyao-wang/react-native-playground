@@ -1,114 +1,57 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-
-import Timer from "./app/Timer";
-
-const timeData = [
-  {
-    id: 0,
-    setNo: 1,
-    workoutNo: 1,
-    type: "rest",
-    duration: 1,
-    start: 0,
-    end: 1,
-  },
-  {
-    id: 1,
-    setNo: 2,
-    workoutNo: 2,
-    type: "workout",
-    duration: 1,
-    start: 1,
-    end: 2,
-  },
-  {
-    id: 2,
-    setNo: 3,
-    workoutNo: 3,
-    type: "rest",
-    duration: 1,
-    start: 2,
-    end: 3,
-  },
-];
-
-const defaultState = {
-  end: timeData[0].end,
-  isActive: false,
-  seconds: 0,
-  sectionId: 0,
-  setNo: timeData[0].setNo,
-  start: timeData[0].start,
-  timeMax: timeData[timeData.length - 1].end,
-  type: timeData[0].type,
-  workoutNo: timeData[0].workoutNo,
+import * as React from "react";
+import {
+  Vibration,
+  StatusBar,
+  Easing,
+  TextInput,
+  Dimensions,
+  Animated,
+  TouchableOpacity,
+  FlatList,
+  Text,
+  View,
+  StyleSheet,
+} from "react-native";
+const { width, height } = Dimensions.get("window");
+const colors = {
+  black: "#323F4E",
+  red: "#F76A6A",
+  text: "#ffffff",
 };
 
-const returnSectionId = (seconds) => {
-  let findResult = timeData.find(
-    (section) => seconds >= section.start && seconds < section.end
-  );
-  if (!findResult)
-    findResult = timeData.find((section) => seconds === section.end);
-
-  return findResult?.id;
-};
+const timers = [...Array(13).keys()].map((i) => (i === 0 ? 1 : i * 5));
+const ITEM_SIZE = width * 0.38;
+const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 
 export default function App() {
-  const [state, setState] = useState(defaultState);
-
-  function setPartOfState(object) {
-    const newObject = { ...state, ...object };
-    setState(newObject);
-  }
-
-  function toggle() {
-    if (state.seconds >= state.timeMax) return Alert.alert("End");
-    setPartOfState({ isActive: !state.isActive });
-  }
-
-  function reset() {
-    setPartOfState(defaultState);
-  }
-
-  useEffect(() => {
-    let interval = null;
-    if (state.isActive && state.seconds < state.timeMax) {
-      interval = setInterval(() => {
-        const newSectionId = returnSectionId(state.seconds + 1);
-
-        const newIsActive =
-          state.seconds + 1 == state.timeMax ? { isActive: false } : {};
-
-        setPartOfState({
-          seconds: state.seconds + 1,
-          sectionId: newSectionId,
-          setNo: timeData[newSectionId].setNo,
-          type: timeData[newSectionId].type,
-          workoutNo: timeData[newSectionId].workoutNo,
-          start: timeData[newSectionId].start,
-          end: timeData[newSectionId].end,
-          ...newIsActive,
-        });
-      }, 1000);
-    } else if (!state.isActive && state.seconds !== 0) {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [state]);
-
   return (
     <View style={styles.container}>
-      <Timer seconds={state.seconds} />
-      <Text>{`Set : ${state.setNo}`}</Text>
-      <Text>{`Workout : ${state.workoutNo}`}</Text>
-      <Text>{`Type : ${state.type}`}</Text>
-      <Button
-        title={state.isActive ? "pause" : "play"}
-        onPress={toggle}
-      ></Button>
-      <Button onPress={reset} title="Reset"></Button>
+      <StatusBar hidden />
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          {
+            justifyContent: "flex-end",
+            alignItems: "center",
+            paddingBottom: 100,
+          },
+        ]}
+      >
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.roundButton} />
+        </TouchableOpacity>
+      </Animated.View>
+      <View
+        style={{
+          position: "absolute",
+          top: height / 3,
+          left: 0,
+          right: 0,
+          flex: 1,
+        }}
+      >
+        <Text style={styles.text}>1</Text>
+      </View>
     </View>
   );
 }
@@ -116,8 +59,18 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: colors.black,
+  },
+  roundButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 80,
+    backgroundColor: colors.red,
+  },
+  text: {
+    fontSize: ITEM_SIZE * 0.8,
+    fontFamily: "Menlo",
+    color: colors.text,
+    fontWeight: "900",
   },
 });
