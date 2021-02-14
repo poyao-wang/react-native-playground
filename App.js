@@ -50,7 +50,30 @@ export default function App() {
           flex: 1,
         }}
       >
-        <Text style={styles.text}>1</Text>
+        <FlatList
+          data={timers}
+          keyExtractor={(item) => item.toString()}
+          horizontal
+          bounces={false}
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={ITEM_SIZE}
+          decelerationRate="fast"
+          style={{ flexGrow: 0 }}
+          contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
+          renderItem={({ item }) => {
+            return (
+              <View
+                style={{
+                  width: ITEM_SIZE,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.text}>{item}</Text>
+              </View>
+            );
+          }}
+        />
       </View>
     </View>
   );
