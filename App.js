@@ -24,6 +24,7 @@ const ITEM_SIZE = width * 0.38;
 const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 
 export default function App() {
+  const scrollX = React.useRef(new Animated.Value(0)).current;
   return (
     <View style={styles.container}>
       <StatusBar hidden />
@@ -50,17 +51,37 @@ export default function App() {
           flex: 1,
         }}
       >
-        <FlatList
+        <Animated.FlatList
           data={timers}
           keyExtractor={(item) => item.toString()}
           horizontal
           bounces={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: true }
+          )}
           showsHorizontalScrollIndicator={false}
           snapToInterval={ITEM_SIZE}
           decelerationRate="fast"
           style={{ flexGrow: 0 }}
           contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
+            const inputRange = [
+              (index - 1) * ITEM_SIZE,
+              index * ITEM_SIZE,
+              (index + 1) * ITEM_SIZE,
+            ];
+
+            const opacity = scrollX.interpolate({
+              inputRange,
+              outputRange: [0.4, 1, 0.4],
+            });
+
+            const scale = scrollX.interpolate({
+              inputRange,
+              outputRange: [0.7, 1, 0.7],
+            });
+
             return (
               <View
                 style={{
@@ -69,7 +90,11 @@ export default function App() {
                   alignItems: "center",
                 }}
               >
-                <Text style={styles.text}>{item}</Text>
+                <Animated.Text
+                  style={[styles.text, { opacity, transform: [{ scale }] }]}
+                >
+                  {item}
+                </Animated.Text>
               </View>
             );
           }}
