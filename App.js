@@ -25,6 +25,7 @@ const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 
 export default function App() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [duration, setDuration] = React.useState(timers[0]);
   return (
     <View style={styles.container}>
       <StatusBar hidden />
@@ -51,6 +52,7 @@ export default function App() {
           flex: 1,
         }}
       >
+        <Text style={styles.text}>{duration}</Text>
         <Animated.FlatList
           data={timers}
           keyExtractor={(item) => item.toString()}
@@ -60,6 +62,12 @@ export default function App() {
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
             { useNativeDriver: true }
           )}
+          onMomentumScrollEnd={(event) => {
+            const index = Math.round(
+              event.nativeEvent.contentOffset.x / ITEM_SIZE
+            );
+            setDuration(timers[index]);
+          }}
           showsHorizontalScrollIndicator={false}
           snapToInterval={ITEM_SIZE}
           decelerationRate="fast"
