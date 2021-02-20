@@ -26,9 +26,35 @@ const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 export default function App() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [duration, setDuration] = React.useState(timers[0]);
+  const timerAnimation = React.useRef(new Animated.Value(height)).current;
+  const animation = React.useCallback(() => {
+    Animated.sequence([
+      Animated.timing(timerAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(timerAnimation, {
+        toValue: height,
+        duration: duration * 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [duration]);
   return (
     <View style={styles.container}>
       <StatusBar hidden />
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          {
+            height,
+            width,
+            backgroundColor: colors.red,
+            transform: [{ translateY: timerAnimation }],
+          },
+        ]}
+      />
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,
@@ -39,7 +65,7 @@ export default function App() {
           },
         ]}
       >
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={animation}>
           <View style={styles.roundButton} />
         </TouchableOpacity>
       </Animated.View>
