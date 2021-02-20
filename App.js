@@ -27,8 +27,14 @@ export default function App() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [duration, setDuration] = React.useState(timers[0]);
   const timerAnimation = React.useRef(new Animated.Value(height)).current;
+  const buttonAnimation = React.useRef(new Animated.Value(0)).current;
   const animation = React.useCallback(() => {
     Animated.sequence([
+      Animated.timing(buttonAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
       Animated.timing(timerAnimation, {
         toValue: 0,
         duration: 300,
@@ -39,8 +45,23 @@ export default function App() {
         duration: duration * 1000,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]).start(() => {
+      Animated.timing(buttonAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    });
   }, [duration]);
+
+  const opacity = buttonAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+  const translateY = buttonAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 200],
+  });
   return (
     <View style={styles.container}>
       <StatusBar hidden />
@@ -62,6 +83,12 @@ export default function App() {
             justifyContent: "flex-end",
             alignItems: "center",
             paddingBottom: 100,
+            opacity,
+            transform: [
+              {
+                translateY,
+              },
+            ],
           },
         ]}
       >
