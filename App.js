@@ -63,6 +63,10 @@ export default function App() {
     inputRange: [0, 1],
     outputRange: [0, 200],
   });
+  const textOpacity = buttonAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
   return (
     <View style={styles.container}>
       <StatusBar hidden />
@@ -113,6 +117,7 @@ export default function App() {
             justifyContent: "center",
             alignItems: "center",
             alignSelf: "center",
+            opacity: textOpacity,
           }}
         >
           <TextInput
@@ -139,7 +144,7 @@ export default function App() {
           showsHorizontalScrollIndicator={false}
           snapToInterval={ITEM_SIZE}
           decelerationRate="fast"
-          style={{ flexGrow: 0 }}
+          style={{ flexGrow: 0, opacity }}
           contentContainerStyle={{ paddingHorizontal: ITEM_SPACING }}
           renderItem={({ item, index }) => {
             const inputRange = [
