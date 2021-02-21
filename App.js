@@ -26,6 +26,7 @@ const ITEM_SPACING = (width - ITEM_SIZE) / 2;
 export default function App() {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [duration, setDuration] = React.useState(timers[0]);
+  const inputRef = React.useRef();
   const timerAnimation = React.useRef(new Animated.Value(height)).current;
   const buttonAnimation = React.useRef(new Animated.Value(0)).current;
   const animation = React.useCallback(() => {
@@ -105,7 +106,21 @@ export default function App() {
           flex: 1,
         }}
       >
-        <Text style={styles.text}>{duration}</Text>
+        <Animated.View
+          style={{
+            position: "absolute",
+            width,
+            justifyContent: "center",
+            alignItems: "center",
+            alignSelf: "center",
+          }}
+        >
+          <TextInput
+            ref={inputRef}
+            style={styles.text}
+            defaultValue={duration.toString()}
+          />
+        </Animated.View>
         <Animated.FlatList
           data={timers}
           keyExtractor={(item) => item.toString()}
