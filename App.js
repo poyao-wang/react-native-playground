@@ -72,7 +72,11 @@ export default function App() {
           easing: Easing.linear,
         }),
       ]),
+      Animated.delay(400),
     ]).start(() => {
+      Vibration.cancel();
+      Vibration.vibrate();
+      textInputAnimation.setValue(duration);
       Animated.timing(buttonAnimation, {
         toValue: 0,
         duration: 300,
